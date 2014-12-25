@@ -5,7 +5,7 @@
 	"content_scripts": [ {
 		"all_frames": true,
 		"js": [ "vimeo.js" ],
-		"matches": [ "http://vimeo.com/*", "https://vimeo.com/*" ],
+		"matches": [ "*://vimeo.com/*", "*://player.vimeo.com/*" ],
 		"run_at": "document_end"
 	} ],
 
