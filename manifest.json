@@ -10,8 +10,8 @@
 	} ],
 
 	"icons": {
-		"128": "vimeo128.png",
-		"48": "vimeo48.png"
+		"128": "images/vimeo128.png",
+		"48": "images/vimeo48.png"
 	},
 	"version": "1.4",
 	"manifest_version": 2
