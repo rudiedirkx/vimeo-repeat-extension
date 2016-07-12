@@ -124,23 +124,29 @@ function createSpeedButton(video) {
 
 
 var $player = document.querySelector('div.player');
-
 if ( $player ) {
-
 	var mo = new MutationObserver(function(muts) {
-		setTimeout(function() {
-			var video = $player.querySelector('video');
-
+		// Must do only once
+		if ( !$player.classList.contains('did-vimeo-repeat') ) {
 			var $buttons = $player.querySelector('.controls-wrapper .sidedock');
+			var $video = $player.querySelector('video');
 
-			if ( $buttons ) {
-				var $box = createRepeatButton(video);
+			// Need buttons menu & video element
+			if ( $buttons && $video ) {
+				// Must really do only once!
+				mo.disconnect();
+
+				$player.classList.add('did-vimeo-repeat');
+
+				// Add REPEAT button
+				var $box = createRepeatButton($video);
 				$buttons.appendChild($box);
 
-				var $box = createSpeedButton(video);
+				// Add SPEED button
+				var $box = createSpeedButton($video);
 				$buttons.appendChild($box);
 			}
-		}, 1);
+		}
 	});
 	mo.observe($player, {"childList": 1})
 }
