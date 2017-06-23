@@ -123,30 +123,53 @@ function createSpeedButton(video) {
 
 
 
+function tryToInitPlayer(attemptsLeft, $player, before) {
+	var $buttons = $player.querySelector('.controls-wrapper .sidedock');
+	var $video = $player.querySelector('video');
+
+	if ( $player && $buttons && $video ) {
+		before && before();
+
+		// Only do once!
+		if ( !$player.classList.contains('did-vimeo-repeat') ) {
+			$player.classList.add('did-vimeo-repeat');
+
+			// Add REPEAT button
+			var $box = createRepeatButton($video);
+			$buttons.appendChild($box);
+
+			// Add SPEED button
+			var $box = createSpeedButton($video);
+			$buttons.appendChild($box);
+		}
+	}
+	else {
+		console.warn(
+			"[Vimeo Repeat] Can't find player, buttons, or video. Trying " + attemptsLeft + " more times.",
+			$player && 1 || 0,
+			$buttons && 1 || 0,
+			$video && 1 || 0
+		);
+		if ( attemptsLeft > 0 ) {
+			setTimeout(function() {
+				tryToInitPlayer(--attemptsLeft, $player, before);
+			}, 50);
+		}
+	}
+}
+
+
+
 var $player = document.querySelector('div.player');
 if ( $player ) {
 	var mo = new MutationObserver(function(muts) {
-		// Must do only once
-		if ( !$player.classList.contains('did-vimeo-repeat') ) {
-			var $buttons = $player.querySelector('.controls-wrapper .sidedock');
-			var $video = $player.querySelector('video');
+		// Only do once!
+		var disconnect = function() {
+			mo.disconnect();
+		};
 
-			// Need buttons menu & video element
-			if ( $buttons && $video ) {
-				// Must really do only once!
-				mo.disconnect();
-
-				$player.classList.add('did-vimeo-repeat');
-
-				// Add REPEAT button
-				var $box = createRepeatButton($video);
-				$buttons.appendChild($box);
-
-				// Add SPEED button
-				var $box = createSpeedButton($video);
-				$buttons.appendChild($box);
-			}
-		}
+		// Try to find buttons menu & video element
+		tryToInitPlayer(2, $player, disconnect);
 	});
 	mo.observe($player, {"childList": 1})
 }
