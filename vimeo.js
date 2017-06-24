@@ -73,9 +73,12 @@ function createSpeedButton(video) {
 	html += '<button title="Mouse scroll to change speed. Click to enter custom speed." tabindex="50" class="speed-button rounded-box" aria-label="Speed">' + video.playbackRate + 'x</button>';
 	$box.innerHTML = html;
 
+	function setLabel() {
+		$button.textContent = (Math.round(video.playbackRate * 100) / 100) + 'x';
+	}
+
 	function setSpeed(speed) {
 		video.playbackRate = speed;
-		$button.textContent = (Math.round(speed * 100) / 100) + 'x';
 
 		if ( video.playbackRate == 1 ) {
 			$button.classList.remove('on');
@@ -118,21 +121,23 @@ function createSpeedButton(video) {
 		}
 	};
 
+	video.addEventListener('ratechange', function(e) {
+		setLabel();
+	});
+
 	return $box;
 }
 
 
 
-function tryToInitPlayer(attemptsLeft, $player, before) {
+function tryToInitPlayer(attemptsLeft, $player) {
 	var $buttons = $player.querySelector('.controls-wrapper .sidedock');
 	var $video = $player.querySelector('video');
 
 	if ( $player && $buttons && $video ) {
-		before && before();
-
 		// Only do once!
-		if ( !$player.classList.contains('did-vimeo-repeat') ) {
-			$player.classList.add('did-vimeo-repeat');
+		if ( !$buttons.querySelector('.repeat-button') ) {
+			console.debug('[Vimeo Repeat] Adding buttons');
 
 			// Add REPEAT button
 			var $box = createRepeatButton($video);
@@ -144,15 +149,10 @@ function tryToInitPlayer(attemptsLeft, $player, before) {
 		}
 	}
 	else {
-		console.warn(
-			"[Vimeo Repeat] Can't find player, buttons, or video. Trying " + attemptsLeft + " more times.",
-			$player && 1 || 0,
-			$buttons && 1 || 0,
-			$video && 1 || 0
-		);
+		console.debug(`[Vimeo Repeat] Can't find buttons (${$buttons ? 'Y' : 'N'}), or video (${$video ? 'Y' : 'N'}). Trying ${attemptsLeft} more times.`);
 		if ( attemptsLeft > 0 ) {
 			setTimeout(function() {
-				tryToInitPlayer(--attemptsLeft, $player, before);
+				tryToInitPlayer(--attemptsLeft, $player);
 			}, 50);
 		}
 	}
@@ -163,13 +163,8 @@ function tryToInitPlayer(attemptsLeft, $player, before) {
 var $player = document.querySelector('div.player');
 if ( $player ) {
 	var mo = new MutationObserver(function(muts) {
-		// Only do once!
-		var disconnect = function() {
-			mo.disconnect();
-		};
-
 		// Try to find buttons menu & video element
-		tryToInitPlayer(2, $player, disconnect);
+		tryToInitPlayer(2, $player);
 	});
-	mo.observe($player, {"childList": 1})
+	mo.observe($player, {"childList": true, "attributes": true});
 }
