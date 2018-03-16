@@ -131,7 +131,7 @@ function createSpeedButton(video) {
 
 
 function tryToInitPlayer(attemptsLeft, $player) {
-	var $buttons = $player.querySelector('.controls-wrapper .sidedock');
+	var $buttons = $player.querySelector('.vp-controls-wrapper .vp-sidedock, .controls-wrapper .sidedock');
 	var $video = $player.querySelector('video');
 
 	if ( $player && $buttons && $video ) {
