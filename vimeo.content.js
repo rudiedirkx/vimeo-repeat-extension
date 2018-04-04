@@ -95,14 +95,14 @@ function createSpeedButton(video) {
 			setSpeed(newSpeed);
 		}
 	});
-	$button.onmousewheel = function(e) {
+	$button.onwheel = function(e) {
 		var speeds = [0.2, 0.3333, 0.5, 0.6666, 1, 1.25, 1.5, 2, 2.5, 3, 4];
 
 		e.preventDefault();
 
-		var direction = e.wheelDelta / Math.abs(e.wheelDelta); // up = 1, down = -1
-		var curSpeed = video.playbackRate,
-			curSpeedIndex = speeds.indexOf(curSpeed);
+		var direction = e.deltaY < 0 ? 1 : -1;
+		var curSpeed = video.playbackRate;
+		var curSpeedIndex = speeds.indexOf(curSpeed);
 
 		// On the scale, so find next by index
 		if ( curSpeedIndex != -1 ) {
