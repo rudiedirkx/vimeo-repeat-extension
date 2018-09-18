@@ -89,9 +89,12 @@ function createSpeedButton(video) {
 	}
 
 	var $button = createXButton($box, function(e) {
-		var curSpeed = video.playbackRate,
-			newSpeed = prompt('New playback rate:', curSpeed);
-		if ( newSpeed != null && Number(newSpeed) == newSpeed && newSpeed != curSpeed ) {
+		var curSpeed = video.playbackRate;
+		var newSpeed = prompt('New playback rate:', curSpeed);
+		if ( newSpeed === null ) return;
+
+		newSpeed = parseFloat(newSpeed.replace(/,/g, '.'));
+		if ( !isNaN(newSpeed) && newSpeed != curSpeed ) {
 			setSpeed(newSpeed);
 		}
 	});
