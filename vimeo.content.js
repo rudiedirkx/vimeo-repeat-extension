@@ -56,7 +56,7 @@ function createRepeatButton(video) {
 		}
 	});
 
-	return $box;
+	return [$box];
 }
 
 function createSpeedButton(video) {
@@ -73,6 +73,8 @@ function createSpeedButton(video) {
 	html += '<button title="Mouse scroll to change speed. Click to enter custom speed." tabindex="50" class="speed-button rounded-box" aria-label="Speed">' + video.playbackRate + 'x</button>';
 	$box.innerHTML = html;
 
+	const speeds = [0.2, 0.3333, 0.5, 0.6666, 1, 1.25, 1.5, 2, 2.5, 3, 4];
+
 	function setLabel() {
 		$button.textContent = (Math.round(video.playbackRate * 100) / 100) + 'x';
 	}
@@ -86,6 +88,12 @@ function createSpeedButton(video) {
 		else {
 			$button.classList.add('on');
 		}
+
+		// Fake trigger "events-moused-over"
+		var $dock = document.querySelector('.vp-sidedock');
+		$dock.classList.remove('hidden');
+		$dock.classList.remove('invisible');
+		$dock.hidden = false;
 	}
 
 	var $button = createXButton($box, function(e) {
@@ -99,11 +107,17 @@ function createSpeedButton(video) {
 		}
 	});
 	$button.onwheel = function(e) {
-		var speeds = [0.2, 0.3333, 0.5, 0.6666, 1, 1.25, 1.5, 2, 2.5, 3, 4];
-
 		e.preventDefault();
 
 		var direction = e.deltaY < 0 ? 1 : -1;
+		deltaSpeed(direction);
+	};
+
+	video.addEventListener('ratechange', function(e) {
+		setLabel();
+	});
+
+	function deltaSpeed(direction) {
 		var curSpeed = video.playbackRate;
 		var curSpeedIndex = speeds.indexOf(curSpeed);
 
@@ -122,13 +136,9 @@ function createSpeedButton(video) {
 				setSpeed(newSpeed);
 			}
 		}
-	};
+	}
 
-	video.addEventListener('ratechange', function(e) {
-		setLabel();
-	});
-
-	return $box;
+	return [$box, setSpeed, deltaSpeed];
 }
 
 
@@ -143,12 +153,23 @@ function tryToInitPlayer(attemptsLeft, $player) {
 			console.debug('[Vimeo Repeat] Adding buttons');
 
 			// Add REPEAT button
-			var $box = createRepeatButton($video);
-			$buttons.appendChild($box);
+			const [$box1] = createRepeatButton($video);
+			$buttons.appendChild($box1);
 
 			// Add SPEED button
-			var $box = createSpeedButton($video);
-			$buttons.appendChild($box);
+			const [$box2, setSpeed, deltaSpeed] = createSpeedButton($video);
+			$buttons.appendChild($box2);
+
+			document.addEventListener('keydown', function(e) {
+				if ( !e.altKey && !e.ctrlKey ) {
+					if ( e.code === 'Minus' ) {
+						deltaSpeed(-1);
+					}
+					else if ( e.code === 'Equal' ) {
+						deltaSpeed(+1);
+					}
+				}
+			});
 		}
 	}
 	else {
