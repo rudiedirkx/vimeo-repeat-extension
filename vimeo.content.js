@@ -3,6 +3,19 @@
 // Or				http://www.dailymotion.com/video/x2dntv_back-to-life-back-to-reality_fun
 // Or				https://www.youtube.com/watch?v=_Xmu-DOTChE
 
+function loadConfig() {
+	return new Promise(function(resolve) {
+		if (chrome.storage) {
+			chrome.storage.local.get(['config'], function(items) {
+				resolve(items.config || {});
+			});
+		}
+		else {
+			resolve({});
+		}
+	});
+}
+
 function onTimeUpdate(e) {
 	var delta = Math.max(0.5, 0.5 * this.playbackRate);
 	if ( this.currentTime >= this.duration - delta ) {
@@ -170,6 +183,12 @@ function tryToInitPlayer(attemptsLeft, $player) {
 					}
 				}
 			});
+
+			loadConfig().then(config => {
+				if ( config.defaultSpeed ) {
+					setSpeed(config.defaultSpeed);
+				}
+			})
 		}
 	}
 	else {

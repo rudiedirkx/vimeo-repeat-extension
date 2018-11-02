@@ -1,0 +1,14 @@
+button {
+	cursor: pointer;
+}
+button:disabled {
+	cursor: not-allowed;
+}
+
+span.saved {
+	color: green;
+	font-weight: bold;
+}
+form:not(.saved) .saved {
+	display: none;
+}
