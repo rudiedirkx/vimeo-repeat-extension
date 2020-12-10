@@ -93,7 +93,10 @@ function createSpeedButton(video) {
 	}
 
 	function setSpeed(speed) {
-		video.playbackRate = speed;
+		video._rdxChangingSpeed = true;
+		setTimeout(() => video._rdxChangingSpeed = false, 50);
+
+		video.playbackRate = video._rdxLastSpeed = speed;
 
 		if ( video.playbackRate == 1 ) {
 			$button.classList.remove('on');
@@ -128,6 +131,11 @@ function createSpeedButton(video) {
 
 	video.addEventListener('ratechange', function(e) {
 		setLabel();
+
+		if (!this._rdxChangingSpeed) {
+			console.warn('[Vimeo Repeat] Resetting changed speed to extension speed :|');
+			setTimeout(() => setSpeed(this._rdxLastSpeed), 50);
+		}
 	});
 
 	function deltaSpeed(direction) {
