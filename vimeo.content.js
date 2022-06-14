@@ -51,7 +51,7 @@ function createRepeatButton(video) {
 
 	var html = '';
 	html += '<style>';
-	html += 'html .player .repeat-button { color: white; font-weight: bold; }\n';
+	html += 'html .player .repeat-button { margin-top: 8px; color: white; font-weight: bold; }\n';
 	html += 'html .player .repeat-button.on { background-color: rgb(0, 173, 239); }\n';
 	html += 'html .player .repeat-button.on:active { background-color: rgb(0, 147, 203); }\n';
 	html += '</style>';
@@ -78,7 +78,7 @@ function createSpeedButton(video) {
 
 	var html = '';
 	html += '<style>';
-	html += 'html .player .speed-button { color: white; font-weight: bold; } \n';
+	html += 'html .player .speed-button { margin-top: 8px; color: white; font-weight: bold; } \n';
 	html += 'html .player .speed-button.on { background-color: rgb(0, 173, 239); } \n';
 	html += 'html .player .speed-button.on:active { background-color: rgb(0, 147, 203); } \n';
 	html += '</style>';
@@ -165,12 +165,13 @@ function createSpeedButton(video) {
 
 
 function tryToInitPlayer(attemptsLeft, $player) {
-	var $buttons = $player.querySelector('.vp-controls-wrapper .vp-sidedock, .controls-wrapper .sidedock');
+	var $buttons = $player.querySelector('.vp-player-ui-overlays .vp-sidedock, .controls-wrapper .sidedock');
 	var $video = $player.querySelector('video');
 
 	if ( $player && $buttons && $video ) {
 		// Only do once!
-		if ( !$buttons.querySelector('.repeat-button') ) {
+		if ( !$buttons.classList.contains('vimeo-repeat-added-buttons') ) {
+			$buttons.classList.add('vimeo-repeat-added-buttons');
 			console.debug('[Vimeo Repeat] Adding buttons');
 
 			// Add REPEAT button
