@@ -47,7 +47,7 @@ function createXButton($box, onClick) {
 
 function createRepeatButton(video) {
 	var $box = document.createElement('div');
-	$box.className = 'box';
+	$box.className = 'vimeo-repeat-box box';
 
 	var html = '';
 	html += '<style>';
@@ -74,7 +74,7 @@ function createRepeatButton(video) {
 
 function createSpeedButton(video) {
 	var $box = document.createElement('div');
-	$box.className = 'box';
+	$box.className = 'vimeo-repeat-box box';
 
 	var html = '';
 	html += '<style>';
@@ -170,7 +170,7 @@ function tryToInitPlayer(attemptsLeft, $player) {
 
 	if ( $player && $buttons && $video ) {
 		// Only do once!
-		if ( !$buttons.classList.contains('vimeo-repeat-added-buttons') ) {
+		if ( !$buttons.classList.contains('vimeo-repeat-added-buttons') && !$buttons.querySelector('.vimeo-repeat-box') ) {
 			$buttons.classList.add('vimeo-repeat-added-buttons');
 			console.debug('[Vimeo Repeat] Adding buttons');
 
